@@ -9,6 +9,12 @@ pipeline {
     tools {
         oc 'oc4'
     }
+    environment {
+        APP_LABEL = 'my-app'
+        OPENSHIFT_CLUSTER = 'my-cluster'
+        OPENSHIFT_CREDENTIALS = 'openshift-jenkins-external'
+        OPENSHIFT_PROJECT = '<DEV-PROJECT>'
+    }
     stages {
         stage('oc test') {
             steps {
@@ -19,6 +25,24 @@ pipeline {
 
                 println "which oc"
                 sh "which oc"
+            }
+        }
+        stage('oc login') {
+            steps {
+                script {
+                    openshift.withCluster(env.OPENSHIFT_CLUSTER) {
+                        openshift.withCredentials(env.OPENSHIFT_CREDENTIALS) {
+                            openshift.withProject(env.OPENSHIFT_PROJECT) {
+                                println "OC Version from Plugin:"
+                                println openshift.raw('version').out
+                                echo "Hello from project ${openshift.project()} in cluster ${openshift.cluster()}"
+                                println openshift.raw('get','project').out
+                                println openshift.raw('status').out
+                                println openshift.raw('get','pod').out
+                            }
+                        }
+                    }
+                }
             }
         }
     }
