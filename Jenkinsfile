@@ -13,7 +13,7 @@ pipeline {
         APP_LABEL = 'my-app'
         OPENSHIFT_CLUSTER = 'my-cluster'
         OPENSHIFT_CREDENTIALS = 'openshift-jenkins-external'
-        OPENSHIFT_PROJECT = '<DEV-PROJECT>'
+        OPENSHIFT_PROJECT = 'hannelore11_dev'
     }
     stages {
         stage('oc test') {
