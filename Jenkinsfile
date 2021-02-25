@@ -6,16 +6,19 @@ pipeline {
         timestamps()  // Timestamper Plugin
         disableConcurrentBuilds()
     }
-    environment {
-        GREETINGS_TO = 'Jenkins Techlab'
+    tools {
+        oc 'oc4'
     }
     stages {
-        stage('Greeting') {
+        stage('oc test') {
             steps {
-                echo "Hello, ${env.GREETINGS_TO} !"
+                println "PATH: ${PATH}"
 
-                // also available as env variable to a process:
-                sh 'echo "Hello, $GREETINGS_TO !"'
+                println "OC Version from Shell, must be available:"
+                sh "oc version"
+
+                println "which oc"
+                sh "which oc"
             }
         }
     }
