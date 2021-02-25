@@ -1,3 +1,5 @@
+@Library('jenkins-techlab-exercise-library') _
+
 pipeline {
     agent any
     options {
@@ -6,17 +8,26 @@ pipeline {
         timestamps()  // Timestamper Plugin
         disableConcurrentBuilds()
     }
-    environment {
-        GREETINGS_TO = 'Jenkins Techlab'
+    tools {
+        jdk 'jdk11'
+        maven 'maven36'
     }
     stages {
-        stage('Greeting') {
+        stage('Build') {
             steps {
-                echo "Hello, ${env.GREETINGS_TO} !"
-
-                // also available as env variable to a process:
-                sh 'echo "Hello, $GREETINGS_TO !"'
+                sh 'mvn -B -V -U -e clean verify -Dsurefire.useFile=false -DargLine="-Djdk.net.URLClassPath.disableClassPathURLCheck=true"'
+                archiveArtifacts 'target/*.?ar'
             }
+            post {
+                always {
+                    junit 'target/**/*.xml'  // Requires JUnit plugin
+                }
+            }
+        }
+    }
+    post {
+        always {
+            notifyPuzzleChat('general')
         }
     }
 }
